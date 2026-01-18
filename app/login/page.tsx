@@ -1,23 +1,30 @@
+'use client'
+
 import { login } from './actions'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ message?: string; error?: string }>
-}) {
-  const { error, message } = await searchParams
+export default function LoginPage() {
+  const [isRegister, setIsRegister] = useState(false)
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+  const message = searchParams.get('message')
 
   return (
     <div className="flex h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
+      <Card className="w-[400px]">
         <CardHeader>
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl">
+            {isRegister ? 'Create Account' : 'Welcome Back'}
+          </CardTitle>
           <CardDescription>
-            Sign in to manage your shared todos
+            {isRegister 
+              ? 'Register to start managing your todos' 
+              : 'Sign in to manage your todos'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -32,7 +39,20 @@ export default async function LoginPage({
                 </div>
                 
                 <div className="flex flex-col gap-2 mt-2">
-                    <Button formAction={login} className="w-full">Log in</Button>
+                    <Button formAction={login} className="w-full">
+                      {isRegister ? 'Register' : 'Log in'}
+                    </Button>
+                    
+                    <Button 
+                      type="button"
+                      variant="ghost" 
+                      className="w-full"
+                      onClick={() => setIsRegister(!isRegister)}
+                    >
+                      {isRegister 
+                        ? 'Already have an account? Sign in' 
+                        : "Don't have an account? Register"}
+                    </Button>
                 </div>
 
                 {error && (

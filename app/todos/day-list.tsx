@@ -4,8 +4,7 @@ import { TodoWithStatus } from './fetchers'
 import { toggleTodo, deleteTodoInstance } from './actions'
 import { useTransition } from 'react'
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
-import { Trash } from "lucide-react"
+import { DeleteTodoDialog } from "@/components/delete-todo-dialog"
 import { cn } from "@/lib/utils"
 
 export default function DayTodoList({ 
@@ -48,20 +47,11 @@ export default function DayTodoList({
                     </div>
 
                     {!readOnly && (
-                         <Button 
-                            variant="ghost" 
-                            size="icon"
-                            className="text-muted-foreground hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20"
-                            onClick={() => {
-                                if(confirm('Delete this todo for today?')) {
-                                    startTransition(() => deleteTodoInstance(todo.id, date))
-                                }
-                            }}
+                        <DeleteTodoDialog
+                            todoTitle={todo.title}
+                            onConfirm={() => startTransition(() => deleteTodoInstance(todo.id, date))}
                             disabled={isPending}
-                            title="Remove from today"
-                         >
-                             <Trash className="h-4 w-4" />
-                         </Button>
+                        />
                     )}
                 </div>
             ))}

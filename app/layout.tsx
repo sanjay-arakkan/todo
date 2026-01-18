@@ -9,7 +9,7 @@ import { MobileNav } from "@/components/mobile-nav"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Shared Todo App',
+  title: 'Todo',
   description: 'Manage your tasks efficiently',
 }
 

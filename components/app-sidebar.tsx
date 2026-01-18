@@ -12,6 +12,7 @@ export function AppSidebar({ appTitle }: { appTitle: string }) {
     const links = [
         { href: "/todos", label: "Today", icon: CheckSquare },
         { href: "/week", label: "Weekly View", icon: Calendar },
+        { href: "/month", label: "Monthly View", icon: Calendar },
         { href: "/add", label: "Add Todo", icon: PlusCircle },
         { href: "/settings", label: "Settings", icon: Settings },
     ]
