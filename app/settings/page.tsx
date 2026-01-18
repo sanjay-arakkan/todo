@@ -18,7 +18,7 @@ export default function SettingsPage() {
                     <div className="space-y-1">
                         <Label>Theme</Label>
                         <p className="text-sm text-muted-foreground">
-                            Select your preferred theme (Light/Dark/System).
+                            Switch between light and dark themes.
                         </p>
                     </div>
                     <ModeToggle />

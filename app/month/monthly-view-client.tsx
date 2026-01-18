@@ -125,13 +125,13 @@ export function MonthlyViewClient({ initialMonthData }: {
                         <Link href={`/week/${dateStr}`} key={dateStr}>
                             <Card className={cn(
                                 "aspect-square flex flex-col items-center justify-center p-2 cursor-pointer transition-all hover:border-primary hover:shadow-md",
-                                isToday && "border-primary bg-primary/5 dark:bg-primary/10",
+                                isToday && "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800",
                                 !hasData && "opacity-60"
                             )}>
                                 <CardContent className="p-0 flex flex-col items-center gap-1">
                                     <span className={cn(
                                         "text-lg font-semibold",
-                                        isToday && "text-primary"
+                                        isToday && "text-blue-600 dark:text-blue-400"
                                     )}>
                                         {dayNum}
                                     </span>

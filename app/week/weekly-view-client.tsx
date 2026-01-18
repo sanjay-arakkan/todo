@@ -69,18 +69,8 @@ export function WeeklyViewClient({ initialWeekData, initialStartDate }: {
                         onClick={() => loadWeek(weekOffset + 1)}
                         disabled={isLoading}
                     >
-                        <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4" />
                     </Button>
-                    {weekOffset !== 0 && (
-                        <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => loadWeek(0)}
-                            disabled={isLoading}
-                        >
-                            Today
-                        </Button>
-                    )}
                 </div>
             </div>
 
@@ -96,7 +86,7 @@ export function WeeklyViewClient({ initialWeekData, initialStartDate }: {
                         <Link href={`/week/${day.date}`} key={day.date} className="block group">
                             <Card className={cn(
                                 "transition-all duration-200 hover:border-primary hover:shadow-md",
-                                isToday && "border-primary bg-primary/5 dark:bg-primary/10"
+                                isToday && "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800"
                             )}>
                                 <CardHeader className="pb-2">
                                     <CardTitle className="flex justify-between items-baseline">
