@@ -9,16 +9,50 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ArrowLeft, CalendarIcon } from "lucide-react"
+
+// Helper functions for date formatting and validation
+function formatDate(date: Date | undefined) {
+    if (!date) {
+      return ""
+    }
+  
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    })
+}
+  
+function isValidDate(date: Date | undefined) {
+    if (!date) {
+      return false
+    }
+    return !isNaN(date.getTime())
+}
 
 export default function AddTodoPage() {
-    // Note: Select in Shadcn is a controlled/uncontrolled hybrid. 
-    // Ideally we use a hidden input or controlled state for form submission if using server actions directly on form.
-    
-    // Since Shadcn Select doesn't naturally work with native FormData easily without a hidden input,
-    // we'll control the value and put it in a hidden input.
     const [recurrence, setRecurrence] = useState('once');
+    // Initialize date state (defaulting to today)
+    const [date, setDate] = useState<Date | undefined>(new Date())
+    // Initialize open state for popover
+    const [open, setOpen] = useState(false)
+    // Initialize month view
+    const [month, setMonth] = useState<Date | undefined>(date)
+    // Initialize input value
+    const [inputValue, setInputValue] = useState(formatDate(date))
     
+    // Helper to format date for hidden input (YYYY-MM-DD local time)
+    const getHiddenDateValue = (d: Date | undefined) => {
+        if (!d) return getTodayDateString();
+        const year = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${m}-${day}`;
+    }
+
     return (
         <div className="container max-w-2xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -67,15 +101,67 @@ export default function AddTodoPage() {
                         </div>
 
                         {recurrence === 'once' && (
-                            <div className="space-y-2">
-                                <Label htmlFor="date">When?</Label>
-                                <Input 
-                                    id="date"
-                                    name="date" 
-                                    type="date" 
-                                    defaultValue={getTodayDateString()} 
-                                    required
-                                />
+                            <div className="flex flex-col gap-3">
+                                <Label htmlFor="date-input" className="px-1">
+                                    When?
+                                </Label>
+                                <input type="hidden" name="date" value={getHiddenDateValue(date)} />
+                                <div className="relative flex gap-2">
+                                    <Input
+                                        id="date-input"
+                                        value={inputValue}
+                                        placeholder="June 01, 2025"
+                                        className="bg-background pr-10"
+                                        onChange={(e) => {
+                                            const newVal = e.target.value
+                                            setInputValue(newVal)
+                                            const newDate = new Date(newVal)
+                                            if (isValidDate(newDate)) {
+                                                setDate(newDate)
+                                                setMonth(newDate)
+                                            }
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "ArrowDown") {
+                                                e.preventDefault()
+                                                setOpen(true)
+                                            }
+                                        }}
+                                        autoComplete="off"
+                                    />
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                id="date-picker"
+                                                variant="ghost"
+                                                className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+                                                type="button" // Important to prevent form submission
+                                            >
+                                                <CalendarIcon className="size-3.5" />
+                                                <span className="sr-only">Select date</span>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                            className="w-auto overflow-hidden p-0"
+                                            align="end"
+                                            alignOffset={-8}
+                                            sideOffset={10}
+                                        >
+                                            <Calendar
+                                                mode="single"
+                                                selected={date}
+                                                // captionLayout="dropdown" // Using default caption layout if not available in current shadcn version
+                                                month={month}
+                                                onMonthChange={setMonth}
+                                                onSelect={(newDate) => {
+                                                    setDate(newDate)
+                                                    setInputValue(formatDate(newDate))
+                                                    setOpen(false)
+                                                }}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                             </div>
                         )}
                         
