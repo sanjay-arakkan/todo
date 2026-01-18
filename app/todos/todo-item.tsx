@@ -1,36 +1,48 @@
 'use client'
 
-import { deleteTodo, toggleTodo } from './actions'
+import { TodoWithStatus } from './fetchers'
+import { toggleTodo, deleteTodoInstance } from './actions'
 import { useTransition } from 'react'
+import { Checkbox } from "@/components/ui/checkbox"
+import { DeleteTodoDialog } from "@/components/delete-todo-dialog"
+import { cn } from "@/lib/utils"
 
-interface Todo {
-  id: string
-  title: string
-  is_complete: boolean
+interface TodoItemProps {
+  todo: TodoWithStatus
+  date: string
+  readOnly?: boolean
 }
 
-export default function TodoItem({ todo }: { todo: Todo }) {
+export default function TodoItem({ todo, date, readOnly = false }: TodoItemProps) {
   const [isPending, startTransition] = useTransition()
 
   return (
-    <div className="todo-item">
-      <input
-        type="checkbox"
-        className="checkbox"
+    <div className="flex items-center p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors">
+      <Checkbox
         checked={todo.is_complete}
-        onChange={(e) => startTransition(() => toggleTodo(todo.id, e.target.checked))}
-        disabled={isPending}
+        disabled={isPending || readOnly}
+        onCheckedChange={(checked) => startTransition(() => toggleTodo(todo.id, date, checked as boolean))}
+        className="mr-4 h-5 w-5"
       />
-      <span className={`todo-text ${todo.is_complete ? 'completed' : ''}`}>
-        {todo.title}
-      </span>
-      <button
-        className="delete-btn"
-        onClick={() => startTransition(() => deleteTodo(todo.id))}
-        disabled={isPending}
-      >
-        🗑️
-      </button>
+      <div className="flex-1 flex flex-col gap-1">
+        <span className={cn(
+          "font-medium transition-all",
+          todo.is_complete && "line-through text-muted-foreground"
+        )}>
+          {todo.title}
+        </span>
+        <span className="text-xs text-muted-foreground capitalize">
+          {todo.recurrence === 'once' ? 'One-time' : todo.recurrence}
+        </span>
+      </div>
+
+      {!readOnly && (
+        <DeleteTodoDialog
+          todoTitle={todo.title}
+          onConfirm={() => startTransition(() => deleteTodoInstance(todo.id, date))}
+          disabled={isPending}
+        />
+      )}
     </div>
   )
 }
